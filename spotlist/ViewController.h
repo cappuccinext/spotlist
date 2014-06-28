@@ -7,7 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <UITableViewDataSource,CLLocationManagerDelegate,UIPickerViewDataSource, UIPickerViewDelegate>
+
+{
+    NSMutableArray      *venues_;
+    CLLocationManager	*locationManager_;
+    NSArray *_pickerData;
+}
+@property (weak, nonatomic) IBOutlet UITableView *tv;
+
+@property (weak, nonatomic) IBOutlet UIPickerView *pv;
+
 
 @end
