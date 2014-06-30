@@ -66,16 +66,17 @@
      }*/
     
     // Configure the cell...
-    //cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
     //cell.textLabel.text = [[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"] objectForKey:@"icon"] objectForKey:@"name"];
     //cell.textLabel.text = [[[venues_ objectAtIndex:indexPath.row] objectForKey:@"contact"] objectForKey:@"formattedPhone"];
     
     /* 配列の中の配列にアクセスするため、NSArrayに代入 */
-    items = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"];
+    //items = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"];
     
     //NSLog(@"items:\n%@",[items description]);
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
-    cell.textLabel.text = [[[[items objectAtIndex:0] objectForKey:@"name"] stringByAppendingString:@","] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
+    
+    cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
+    //cell.textLabel.text = [[[[items objectAtIndex:0] objectForKey:@"name"] stringByAppendingString:@","] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
     //NSLog(@"elements[0] = %@",[[items objectAtIndex:0] objectForKey:@"name"]);
     
     //NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lat"] doubleValue]);
@@ -110,24 +111,33 @@
     NSString *response = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
     NSData *jsonData = [response dataUsingEncoding:NSUTF32BigEndianStringEncoding];
     
-    
-    NSDictionary *jsonDic = [NSJSONSerialization
-                             JSONObjectWithData:jsonData
-                                        options:kNilOptions
-                                          error:&error];
-    
-    if (!error) {
-        // エラーコードをログに出力
-        NSInteger errorCode = [[[jsonDic objectForKey:@"meta"] objectForKey:@"code"] integerValue];
-        NSLog(@"errorCode = %ld", (long)errorCode);
-        
-        // 結果取得
-        NSArray *venues = [[jsonDic objectForKey:@"response"] objectForKey:@"venues"];
-        venues_ = [venues mutableCopy];
+    if (jsonData == nil) {
+        NSLog(@"ERROR!");
     }else{
-        NSLog(@"Error: %@", [error localizedDescription]);
-    }
+        NSDictionary *jsonDic = [NSJSONSerialization
+                                 JSONObjectWithData:jsonData
+                                 options:kNilOptions
+                                 error:&error];
+        
+        if (!error) {
+            // エラーコードをログに出力
+            if ([jsonDic count] == 0) {
+                NSLog(@"don't access it as the index is out of bounds");
+                return;
+            }else{
+                NSInteger errorCode = [[[jsonDic objectForKey:@"meta"] objectForKey:@"code"] integerValue];
+                NSLog(@"errorCode = %ld", (long)errorCode);
+                
+                // 結果取得
+                NSArray *venues = [[jsonDic objectForKey:@"response"] objectForKey:@"venues"];
+                venues_ = [venues mutableCopy];
+            }
+        }else{
+            NSLog(@"Error: %@", [error localizedDescription]);
+        }
+        
 
+    }
     
     [self.tv reloadData];
 }
