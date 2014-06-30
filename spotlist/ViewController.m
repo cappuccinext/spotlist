@@ -21,7 +21,7 @@
     
     self.tv.dataSource = self;
     
-    _pickerData = @[@"施設名称", @"ID", @"電話番号", @"緯度", @"経度", @"郵便番号",@"URL"];
+    _pickerData = @[@"施設名称", @"ID", @"電話番号", @"緯度", @"経度", @"郵便番号",@"URL",@"ジャンル"];
     
     self.pv.delegate = self;
     self.pv.dataSource = self;
@@ -49,6 +49,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
+    NSArray *items;
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -65,11 +66,21 @@
      }*/
     
     // Configure the cell...
-    cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
-    //cell.textLabel.text = [[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"name"];
+    //cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
+    //cell.textLabel.text = [[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"] objectForKey:@"icon"] objectForKey:@"name"];
+    //cell.textLabel.text = [[[venues_ objectAtIndex:indexPath.row] objectForKey:@"contact"] objectForKey:@"formattedPhone"];
     
-    NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lat"] doubleValue]);
-    NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lng"] doubleValue]);
+    /* 配列の中の配列にアクセスするため、NSArrayに代入 */
+    items = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"];
+    
+    //NSLog(@"items:\n%@",[items description]);
+    cell.textLabel.adjustsFontSizeToFitWidth = YES;
+    cell.textLabel.text = [[[[items objectAtIndex:0] objectForKey:@"name"] stringByAppendingString:@","] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
+    //NSLog(@"elements[0] = %@",[[items objectAtIndex:0] objectForKey:@"name"]);
+    
+    //NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lat"] doubleValue]);
+    //NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lng"] doubleValue]);
+    //NSLog(@"%@",[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"] objectForKey:@"id"]);
     return cell;
 }
 
@@ -87,6 +98,7 @@
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
+    NSError *error;
     // 緯度・経度取得
     CLLocationDegrees latitude = newLocation.coordinate.latitude;
     CLLocationDegrees longitude = newLocation.coordinate.longitude;
@@ -97,15 +109,25 @@
     NSURL *url = [NSURL URLWithString:urlString];
     NSString *response = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
     NSData *jsonData = [response dataUsingEncoding:NSUTF32BigEndianStringEncoding];
-    NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
     
-    // エラーコードをログに出力
-    NSInteger errorCode = [[[jsonDic objectForKey:@"meta"] objectForKey:@"code"] integerValue];
-    NSLog(@"errorCode = %ld", (long)errorCode);
     
-    // 結果取得
-    NSArray *venues = [[jsonDic objectForKey:@"response"] objectForKey:@"venues"];
-    venues_ = [venues mutableCopy];
+    NSDictionary *jsonDic = [NSJSONSerialization
+                             JSONObjectWithData:jsonData
+                                        options:kNilOptions
+                                          error:&error];
+    
+    if (!error) {
+        // エラーコードをログに出力
+        NSInteger errorCode = [[[jsonDic objectForKey:@"meta"] objectForKey:@"code"] integerValue];
+        NSLog(@"errorCode = %ld", (long)errorCode);
+        
+        // 結果取得
+        NSArray *venues = [[jsonDic objectForKey:@"response"] objectForKey:@"venues"];
+        venues_ = [venues mutableCopy];
+    }else{
+        NSLog(@"Error: %@", [error localizedDescription]);
+    }
+
     
     [self.tv reloadData];
 }
