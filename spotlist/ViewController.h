@@ -14,6 +14,7 @@
 {
     NSMutableArray      *venues_;
     CLLocationManager	*locationManager_;
+    NSTimer             *timer;
     NSArray *_pickerData;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tv;

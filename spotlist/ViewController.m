@@ -31,6 +31,10 @@
     locationManager_ = [[CLLocationManager alloc] init];
     [locationManager_ setDelegate:self];
     [locationManager_ startUpdatingLocation];
+    
+    //タイマ処理に切り替え
+    timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(getGpsData:)userInfo:nil repeats:YES];
+
 }
 
 #pragma mark - Table view data source
@@ -70,13 +74,13 @@
     //cell.textLabel.text = [[[venues_ objectAtIndex:indexPath.row] objectForKey:@"contact"] objectForKey:@"formattedPhone"];
     
     /* 配列の中の配列にアクセスするため、NSArrayに代入 */
-    //items = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"];
+    items = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"];
     
     //NSLog(@"items:\n%@",[items description]);
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
     
-    cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
-    //cell.textLabel.text = [[[[items objectAtIndex:0] objectForKey:@"name"] stringByAppendingString:@","] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
+    //cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
+    cell.textLabel.text = [[[[items objectAtIndex:0] objectForKey:@"name"] stringByAppendingString:@","] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
     //NSLog(@"elements[0] = %@",[[items objectAtIndex:0] objectForKey:@"name"]);
     
     //NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lat"] doubleValue]);
@@ -85,6 +89,52 @@
     return cell;
 }
 
+- (void)getGpsData:(NSTimer *)theTimer {
+    CLLocation *location = [locationManager_ location];
+    CLLocationCoordinate2D coordinate = [location coordinate];// 座標を取得
+    NSString *lat = [[NSString alloc] initWithFormat:@"%f", coordinate.latitude]; // 経度を取得
+    NSString *lng = [[NSString alloc] initWithFormat:@"%f", coordinate.longitude]; // 緯度を取得
+    NSLog(@"+++++ [デリゲートによらない場合]緯度,经度: %@, %@", lat, lng);
+    
+    NSError *error;
+    
+    // APIからベニューリストを取得
+    NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=100&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=20140627", coordinate.latitude, coordinate.longitude];
+    //NSLog(@"urlString = %@", urlString);
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSString *response = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
+    NSData *jsonData = [response dataUsingEncoding:NSUTF32BigEndianStringEncoding];
+    
+    if (jsonData == nil) {
+        NSLog(@"ERROR!");
+    }else{
+        NSDictionary *jsonDic = [NSJSONSerialization
+                                 JSONObjectWithData:jsonData
+                                 options:kNilOptions
+                                 error:&error];
+        
+        if (!error) {
+            // エラーコードをログに出力
+            if ([jsonDic count] == 0) {
+                NSLog(@"don't access it as the index is out of bounds");
+                return;
+            }else{
+                NSInteger errorCode = [[[jsonDic objectForKey:@"meta"] objectForKey:@"code"] integerValue];
+                NSLog(@"errorCode = %ld", (long)errorCode);
+                
+                // 結果取得
+                NSArray *venues = [[jsonDic objectForKey:@"response"] objectForKey:@"venues"];
+                venues_ = [venues mutableCopy];
+            }
+        }else{
+            NSLog(@"Error: %@", [error localizedDescription]);
+        }
+        
+        
+    }
+    
+    [self.tv reloadData];
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -95,6 +145,7 @@
 #pragma mark - CLLocationManager delegate
 
 // GPSの位置情報が更新されたら呼ばれる
+/*
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
@@ -141,7 +192,8 @@
     
     [self.tv reloadData];
 }
-
+*/
+#pragma mark - PickerController Setup
 // The number of columns of data
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
