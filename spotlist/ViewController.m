@@ -31,7 +31,7 @@
     locationManager_ = [[CLLocationManager alloc] init];
     [locationManager_ setDelegate:self];
     locationManager_.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
-    locationManager_.distanceFilter = 100.0f;
+    locationManager_.distanceFilter = 100.0f;//100m移動するごとに測位値を返却する
     [locationManager_ startUpdatingLocation];
 }
 
@@ -82,6 +82,8 @@
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
     
     cell.textLabel.text = [[[array objectAtIndex:indexPath.row] stringByAppendingString:@" / "] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
+    
+    
 
     return cell;
 }
@@ -105,6 +107,10 @@
     CLLocationDegrees latitude = newLocation.coordinate.latitude;
     CLLocationDegrees longitude = newLocation.coordinate.longitude;
     
+    CLLocation *Apoint = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
+    
+    //CLLocationDistance distance = [Apoint distanceFromLocation:Bpoint];
+    
     // APIからベニューリストを取得
     NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=10&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=20140627", latitude, longitude];
     //NSLog(@"urlString = %@", urlString);
@@ -120,6 +126,17 @@
                                  options:kNilOptions
                                  error:&error];
         
+        NSArray *responseLAT = [jsonDic valueForKeyPath:@"response.venues.location.lat"];
+        NSArray *responseLNG = [jsonDic valueForKeyPath:@"response.venues.location.lng"];
+        NSLog(@"%@,%@",[responseLAT description],[responseLNG description]);
+        
+        NSArray *Bpoint = @[];
+        //距離をコンソールに表示する
+        for (int i = 0;i<10;i++)
+        {
+            CLLocation *B = [[CLLocation alloc] initWithLatitude:[[responseLAT objectAtIndex:i] doubleValue] longitude:[[responseLNG objectAtIndex:i] doubleValue]];
+            NSLog(@"distance = %f",[Apoint distanceFromLocation:B]);
+        }
         
         if (!error) {
             // エラーコードをログに出力
