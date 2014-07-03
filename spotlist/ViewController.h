@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "ISRemoveNull.h"
 
 @interface ViewController : UIViewController <UITableViewDataSource,CLLocationManagerDelegate,UIPickerViewDataSource, UIPickerViewDelegate>
 

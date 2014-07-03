@@ -30,6 +30,8 @@
     // 現在地取得開始
     locationManager_ = [[CLLocationManager alloc] init];
     [locationManager_ setDelegate:self];
+    locationManager_.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+    locationManager_.distanceFilter = 100.0f;
     [locationManager_ startUpdatingLocation];
 }
 
@@ -49,7 +51,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    NSArray *items;
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -58,30 +59,30 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
-    /*
-     if (cell == nil) {
-     
-     cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
-     
-     }*/
     
-    // Configure the cell...
-    //cell.textLabel.text = [[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"] objectForKey:@"icon"] objectForKey:@"name"];
-    //cell.textLabel.text = [[[venues_ objectAtIndex:indexPath.row] objectForKey:@"contact"] objectForKey:@"formattedPhone"];
+    NSArray *responseJSON = [venues_ valueForKeyPath:@"categories.name"];
+    //NSLog(@"%@",responseJSON);
     
-    /* 配列の中の配列にアクセスするため、NSArrayに代入 */
-    //items = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"];
+    NSArray *array = @[];
     
-    //NSLog(@"items:\n%@",[items description]);
+    /*NSArrayが要素となっているNSArrayを分解して、新しいNSArrayを生成*/
+    for (NSArray *data in responseJSON) {
+        if ([data count] == 0) {
+            array = [array arrayByAddingObject:@"NODATA"];
+            //NSLog(@"NODATA");
+        }else{
+            array = [array arrayByAddingObject:[data objectAtIndex:0]];
+            //NSLog(@"name = %@",[data objectAtIndex:0]);
+        }
+        
+    }
+    //検証用のNSLog
+    //NSLog(@"array = %@", array);
+    
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
     
-    cell.textLabel.text = [[venues_ objectAtIndex:indexPath.row] objectForKey:@"name"];
-    //cell.textLabel.text = [[[[items objectAtIndex:0] objectForKey:@"name"] stringByAppendingString:@","] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
-    //NSLog(@"elements[0] = %@",[[items objectAtIndex:0] objectForKey:@"name"]);
-    
-    //NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lat"] doubleValue]);
-    //NSLog(@"%f",[[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"location"] objectForKey:@"lng"] doubleValue]);
-    //NSLog(@"%@",[[[venues_ objectAtIndex:indexPath.row] objectForKey:@"categories"] objectForKey:@"id"]);
+    cell.textLabel.text = [[[array objectAtIndex:indexPath.row] stringByAppendingString:@" / "] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
+
     return cell;
 }
 
@@ -105,7 +106,7 @@
     CLLocationDegrees longitude = newLocation.coordinate.longitude;
     
     // APIからベニューリストを取得
-    NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=30&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=20140627", latitude, longitude];
+    NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=10&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=20140627", latitude, longitude];
     //NSLog(@"urlString = %@", urlString);
     NSURL *url = [NSURL URLWithString:urlString];
     NSString *response = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
@@ -118,6 +119,7 @@
                                  JSONObjectWithData:jsonData
                                  options:kNilOptions
                                  error:&error];
+        
         
         if (!error) {
             // エラーコードをログに出力
