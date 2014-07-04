@@ -14,12 +14,18 @@
 
 {
     NSMutableArray      *venues_;
+    NSMutableArray      *distance_;
+    int                 limit;
     CLLocationManager	*locationManager_;
     NSArray *_pickerData;
+    bool type;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 
 @property (weak, nonatomic) IBOutlet UIPickerView *pv;
 
+@property (weak, nonatomic) IBOutlet UISegmentedControl *sc;
+
+- (IBAction)segChanged:(id)sender;
 
 @end
