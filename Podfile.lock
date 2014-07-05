@@ -1,10 +1,13 @@
 PODS:
   - ISRemoveNull (0.0.3)
+  - TWRCharts (0.1)
 
 DEPENDENCIES:
   - ISRemoveNull
+  - TWRCharts
 
 SPEC CHECKSUMS:
   ISRemoveNull: 1b5b42d91f3f08cd35584153a9ab3cc652416cbd
+  TWRCharts: 4da6c4c92df46328e184549176a9bb6bd1f0f511
 
 COCOAPODS: 0.33.1

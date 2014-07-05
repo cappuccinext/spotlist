@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-TWRCharts.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -17,12 +22,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>64765D27FB64402DA378F47A</key>
+		<key>7AAFE999542A47DB80838CCA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>EFAFF49170E44BD4A2F38594</key>
+		<key>E6A0778DE116419A9A24C05B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FB3A12FFB0954FF7A172585D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -19,7 +19,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    // Do any additional setup after loading the view, typically from a nib.
     
     self.tv.dataSource = self;
     
@@ -105,7 +105,7 @@
     }
     
     
-    NSSortDescriptor *descriptor1=[[NSSortDescriptor alloc] initWithKey:@"GENRE" ascending:YES];
+    //NSSortDescriptor *descriptor1=[[NSSortDescriptor alloc] initWithKey:@"GENRE" ascending:YES];
     
     NSSortDescriptor *descriptor2=[[NSSortDescriptor alloc] initWithKey:@"DISTANCE.intValue" ascending:YES];
     
@@ -117,16 +117,16 @@
     //NSLog(@"%@",[sortedArr description]);
     
     /* 辞書を勉強しようとした残骸（そのうち消す）
-    NSArray *keyDic = @[@"genre",@"name",@"id"];
-    NSArray *vals = @[[array objectAtIndex:0],[[venues_ objectAtIndex:0] objectForKey:@"name"],[[venues_ objectAtIndex:0] objectForKey:@"id"]];
-    NSArray *vals2 = @[[array objectAtIndex:0],[[venues_ objectAtIndex:1] objectForKey:@"name"],[[venues_ objectAtIndex:1] objectForKey:@"id"]];NSMutableDictionary *mdic = [NSMutableDictionary dictionary];
-    [mdic setObject:vals forKey:keyDic];
-    [mdic setObject:vals2 forKey:keyDic];
-    
-    NSLog(@"%@",[mdic description]);*/
+     NSArray *keyDic = @[@"genre",@"name",@"id"];
+     NSArray *vals = @[[array objectAtIndex:0],[[venues_ objectAtIndex:0] objectForKey:@"name"],[[venues_ objectAtIndex:0] objectForKey:@"id"]];
+     NSArray *vals2 = @[[array objectAtIndex:0],[[venues_ objectAtIndex:1] objectForKey:@"name"],[[venues_ objectAtIndex:1] objectForKey:@"id"]];NSMutableDictionary *mdic = [NSMutableDictionary dictionary];
+     [mdic setObject:vals forKey:keyDic];
+     [mdic setObject:vals2 forKey:keyDic];
+     
+     NSLog(@"%@",[mdic description]);*/
     
     /*リスト表示の基本コード（バグったらここを戻すこと）
-    cell.textLabel.text = [[[array objectAtIndex:indexPath.row] stringByAppendingString:@" / "] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
+     cell.textLabel.text = [[[array objectAtIndex:indexPath.row] stringByAppendingString:@" / "] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
      */
     
     NSString *cellVal = [[sortedArr objectAtIndex:indexPath.row] objectForKey:@"DISTANCE"];
@@ -135,13 +135,13 @@
     
     cell.detailTextLabel.text = [[sortedArr objectAtIndex:indexPath.row]objectForKey:@"GENRE"];
     /*
-    NSMutableArray *sortedDist = [[sortedArr objectAtIndex:indexPath.row] objectForKey:@"DISTANCE"];
-    NSLog(@"%@",[sortedDist description]);
-    
-    NSString *cellVal = [[sortedArr objectAtIndex:indexPath.row] objectForKey:@"DISTANCE"];
-    
-    cell.textLabel.text = [NSString stringWithFormat:@"%@",cellVal];
-    */
+     NSMutableArray *sortedDist = [[sortedArr objectAtIndex:indexPath.row] objectForKey:@"DISTANCE"];
+     NSLog(@"%@",[sortedDist description]);
+     
+     NSString *cellVal = [[sortedArr objectAtIndex:indexPath.row] objectForKey:@"DISTANCE"];
+     
+     cell.textLabel.text = [NSString stringWithFormat:@"%@",cellVal];
+     */
     return cell;
 }
 
@@ -166,8 +166,6 @@
     limit = 30;
     
     CLLocation *Apoint = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
-    
-    //CLLocationDistance distance = [Apoint distanceFromLocation:Bpoint];
     
     // APIからベニューリストを取得
     NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=%d&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=20140627", latitude, longitude,limit];
@@ -216,7 +214,7 @@
             NSLog(@"Error: %@", [error localizedDescription]);
         }
         
-
+        
     }
     
     [self.tv reloadData];

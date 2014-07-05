@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="SvK-FB-wfl">
-                                <rect key="frame" x="0.0" y="66" width="320" height="314"/>
+                                <rect key="frame" x="0.0" y="66" width="320" height="455"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uJS-uf-P23">
@@ -27,7 +27,7 @@
                                 </items>
                             </navigationBar>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="3sn-Vh-Ngl">
-                                <rect key="frame" x="57" y="380" width="207.5" height="29"/>
+                                <rect key="frame" x="20" y="529" width="207.5" height="29"/>
                                 <segments>
                                     <segment title="距離順"/>
                                     <segment title="ジャンル順"/>
@@ -36,9 +36,15 @@
                                     <action selector="segChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="cQp-ww-30o"/>
                                 </connections>
                             </segmentedControl>
-                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="67K-wi-FQN">
-                                <rect key="frame" x="45" y="406" width="230" height="162"/>
-                            </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6S9-Zf-ShE">
+                                <rect key="frame" x="227" y="528" width="73" height="30"/>
+                                <state key="normal" title="グラフ">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="wUb-ZF-Ux5" kind="push" id="X2B-Au-uuv"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -46,14 +52,32 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="568"/>
                     <connections>
-                        <outlet property="pv" destination="67K-wi-FQN" id="46Z-c5-oHZ"/>
                         <outlet property="sc" destination="3sn-Vh-Ngl" id="X0R-XN-HOD"/>
                         <outlet property="tv" destination="SvK-FB-wfl" id="msi-1U-kQX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="140" y="118"/>
+            <point key="canvasLocation" x="70" y="183.5"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="5P5-NW-ng3">
+            <objects>
+                <viewController id="wUb-ZF-Ux5" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Hag-ev-wWX"/>
+                        <viewControllerLayoutGuide type="bottom" id="2nM-rC-AOO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="uYH-K4-J3O" customClass="GraphView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="84F-62-RhI"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6jJ-w4-mhI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="573" y="118"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
