@@ -64,16 +64,19 @@
     
     type = 0;
     
-    NSArray *responseJSON = [venues_ valueForKeyPath:@"categories.name"];
-    //NSLog(@"%@",responseJSON);
+    NSArray *responseNAME = [venues_ valueForKeyPath:@"categories.name"];
+    NSArray *responseURL = [venues_ valueForKeyPath:@"categories.icon.prefix"];
+    
+    //NSLog(@"%@",responseURL);
     
     NSArray *array = @[];
+    NSArray *arrURL = @[];
     
     //nsdictionaryを複数作る
     //nsarrayでまとめる。
     
     /*NSArrayが要素となっているNSArrayを分解してNSStringを抽出し、新しいNSArrayを生成*/
-    for (NSArray *data in responseJSON) {
+    for (NSArray *data in responseNAME) {
         if ([data count] == 0) {
             array = [array arrayByAddingObject:@"NODATA"];
             //NSLog(@"NODATA");
@@ -82,8 +85,20 @@
             //NSLog(@"name = %@",[data objectAtIndex:0]);
         }
     }
+    
+    /*NSArrayが要素となっているNSArrayを分解してNSStringを抽出し、新しいNSArrayを生成*/
+    for (NSArray *data in responseURL) {
+        if ([data count] == 0) {
+            arrURL = [arrURL arrayByAddingObject:@"NODATA"];
+            //NSLog(@"NODATA");
+        }else{
+            arrURL = [arrURL arrayByAddingObject:[data objectAtIndex:0]];
+            //NSLog(@"name = %@",[data objectAtIndex:0]);
+        }
+    }
+    
     //検証用のNSLog
-    //NSLog(@"array = %@", array);
+    NSLog(@"array = %@", arrURL);
     
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
     
@@ -112,18 +127,8 @@
     
     //NSArray *sortedArr = [dataArray sortedArrayUsingDescriptors:@[descriptor1]];
     NSArray *sortedArr = [dataArray sortedArrayUsingDescriptors:@[descriptor2]];
-    
-    
+
     //NSLog(@"%@",[sortedArr description]);
-    
-    /* 辞書を勉強しようとした残骸（そのうち消す）
-     NSArray *keyDic = @[@"genre",@"name",@"id"];
-     NSArray *vals = @[[array objectAtIndex:0],[[venues_ objectAtIndex:0] objectForKey:@"name"],[[venues_ objectAtIndex:0] objectForKey:@"id"]];
-     NSArray *vals2 = @[[array objectAtIndex:0],[[venues_ objectAtIndex:1] objectForKey:@"name"],[[venues_ objectAtIndex:1] objectForKey:@"id"]];NSMutableDictionary *mdic = [NSMutableDictionary dictionary];
-     [mdic setObject:vals forKey:keyDic];
-     [mdic setObject:vals2 forKey:keyDic];
-     
-     NSLog(@"%@",[mdic description]);*/
     
     /*リスト表示の基本コード（バグったらここを戻すこと）
      cell.textLabel.text = [[[array objectAtIndex:indexPath.row] stringByAppendingString:@" / "] stringByAppendingString:[[venues_ objectAtIndex:indexPath.row]objectForKey:@"name"]];
@@ -161,6 +166,24 @@
 {
     NSError *error;
     // 緯度・経度取得
+    
+#pragma mark - aquire date
+    
+    NSDate *now = [[NSDate date] dateByAddingTimeInterval:-5*24*60*60];
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSUInteger flags;
+    NSDateComponents *comps;
+    
+    flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour ;
+    comps = [calendar components:flags fromDate:now];
+    
+    NSInteger year = comps.year;
+    NSInteger month = comps.month;
+    NSInteger day = comps.day;
+    
+    NSLog(@"%04ld%02ld%02ld",(long)year,(long)month,(long)day);
+    
     CLLocationDegrees latitude = newLocation.coordinate.latitude;
     CLLocationDegrees longitude = newLocation.coordinate.longitude;
     limit = 30;
@@ -168,7 +191,7 @@
     CLLocation *Apoint = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
     
     // APIからベニューリストを取得
-    NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=%d&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=20140627", latitude, longitude,limit];
+    NSString *urlString = [NSString stringWithFormat:@"https://api.foursquare.com/v2/venues/search?ll=%f,%f&limit=%d&client_id=ICIWPLPZATTTPYV0YBSVB4AQCF2PVXUWKHS3ZT1BURV0PS02&client_secret=T5SEMJSHYURT5UGERXLZNCUGI1QZ1JJHWBYN2XLDWK3FQUFN&v=%04ld%02ld%02ld", latitude, longitude,limit,(long)year,(long)month,(long)day];
     //NSLog(@"urlString = %@", urlString);
     NSURL *url = [NSURL URLWithString:urlString];
     NSString *response = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
